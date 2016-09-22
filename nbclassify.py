@@ -4,30 +4,24 @@ import sys, pprint, functools, os, glob
 from math import log
 
 class nbclassify(object):
+    """
+        class to classiy mails based on nbmodel.txt produced by
+         nblearn.py
+    """
     def __init__(self):
         self.nbmod_dict = {}
 
-
-
     def classify(self, file, outputHandle):
-
-        # print("$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        # print(self.nbmod_dict['word']['leadership'][0])
 
         words = []
         with open(file, "r", encoding="latin1") as f:
             words = f.read().split()
-
-        # print(words)
 
         wordSpam = []
         for x in words:
             if x in self.nbmod_dict['word']:
                 wordSpam.append(self.nbmod_dict['word'][x][0])
 
-        # print("##############")
-        # print(wordSpam)
-        # wordSpam = [self.nbmod_dict['word'][x][0] for x in words]
         logSpam = list(map(log, wordSpam))
         spamProb = functools.reduce(lambda x, y: x + y, logSpam) + log(self.nbmod_dict['spam'])
 
@@ -35,16 +29,14 @@ class nbclassify(object):
         for x in words:
             if x in self.nbmod_dict['word']:
                 wordHam.append(self.nbmod_dict['word'][x][1])
-        # wordHam = [self.nbmod_dict['word'][x][1] for x in words]
+
         logHam = list(map(log, wordHam))
         hamProb = functools.reduce(lambda x, y: x + y, logHam) + log(self.nbmod_dict['ham'])
 
-
-        # print("opened the file and writing to it")
-        if (hamProb > spamProb):
-            outputHandle.write(str("HAM " + file))
+        if hamProb > spamProb:
+            outputHandle.write(str("HAM " + file + "\n"))
         else:
-            outputHandle.write(str("SPAM " + file))
+            outputHandle.write(str("SPAM " + file + "\n"))
 
         return
 
@@ -69,9 +61,12 @@ if __name__ == "__main__":
     nbclassify_obj = nbclassify()
     nbclassify_obj.nbmod_dict = nbmodel
 
-    spamFolder = os.path.join(dataPath, "dev\*\*\*.txt")
-    devFiles = [name for name in glob.glob(spamFolder)]
-    # print(spamFiles)
+    devFiles = []
+
+    for root, dirnames, filenames in os.walk(dataPath):
+        for file in filenames:
+            if file.endswith(".txt"):
+                devFiles.append(os.path.join(root, file))
 
     try:
         outputHandle = open('nboutput.txt', 'w')

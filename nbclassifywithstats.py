@@ -19,6 +19,11 @@ class nbclassify(object):
         self.spamFP = 0
         self.spamFN = 0
 
+        self.stopWordList = ["a", "about", "an", "are", "as", "at", "be", "by", "for",
+                             "from", "how", "i", "in", "is", "it", "la", "of", "on", "or",
+                             "that", "the", "this", "to", "was", "what", "when", "where",
+                             "who", "will", "with", "und", "the", "www"]
+
     def classify(self, file, outputHandle):
 
         words = []
@@ -27,7 +32,7 @@ class nbclassify(object):
 
         wordSpam = []
         for x in words:
-            if x in self.nbmod_dict['word']:
+            if x in self.nbmod_dict['word'] and x not in self.stopWordList:
                 wordSpam.append(self.nbmod_dict['word'][x][0])
 
         logSpam = list(map(log, wordSpam))
@@ -35,7 +40,7 @@ class nbclassify(object):
 
         wordHam = []
         for x in words:
-            if x in self.nbmod_dict['word']:
+            if x in self.nbmod_dict['word'] and x not in self.stopWordList:
                 wordHam.append(self.nbmod_dict['word'][x][1])
 
         logHam = list(map(log, wordHam))
@@ -69,7 +74,8 @@ if __name__ == "__main__":
 
     dataPath = sys.argv[1]
 
-    # print("The file name is: ", dataPath)
+    print("The file name is: ", dataPath)
+    print("Somet")
 
     nbmodel = {}
 
@@ -99,8 +105,25 @@ if __name__ == "__main__":
 
     outputHandle.close()
 
+    spamPrecision = nbclassify_obj.spamTP / (nbclassify_obj.spamTP + nbclassify_obj.spamFP)
+    print("spam precision: ", spamPrecision)
 
-    # print("Exiting classification")
+    spamRecall = nbclassify_obj.spamTP / (nbclassify_obj.spamTP + nbclassify_obj.spamFN)
+    print("spam recall: ", spamRecall)
+
+    spamF1Score = 2 * ((spamPrecision * spamRecall) / (spamPrecision + spamRecall))
+    print("spam F1 score: ", spamF1Score)
+
+    hamPrecision = nbclassify_obj.hamTP / (nbclassify_obj.hamTP + nbclassify_obj.hamFP)
+    print("sam precision: ", hamPrecision)
+
+    hamRecall = nbclassify_obj.hamTP / (nbclassify_obj.hamTP + nbclassify_obj.hamFN)
+    print("ham recall: ", hamRecall)
+
+    hamF1Score = 2 * ((hamPrecision * hamRecall) / (hamPrecision + hamRecall))
+    print("ham F1 score: ", hamF1Score)
+
+    print("Exiting classification")
     exit(0)
 
 

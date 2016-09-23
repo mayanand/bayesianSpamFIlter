@@ -127,3 +127,5 @@ if __name__ == "__main__":
     learn_obj.fname = dataPath
     learn_obj.getData()
     learn_obj.find_token_probability()
+    print("Exiting model creation")
+    exit(0)

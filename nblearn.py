@@ -10,8 +10,8 @@ class Learn(object):
         self.spamTrainingCount = 0  #contains total spam training data
         self.hamTrainingCount = 0   #contans total ham training data
         self.totalTrainingCount = 0
-        self.spamWordCount = defaultdict(lambda: 1)
-        self.hamWordCount = defaultdict(lambda: 1)
+        self.spamWordCount = {}
+        self.hamWordCount = {}
         self.spamFiles = []
         self.hamFiles = []
         self.spamWordList = []
@@ -37,7 +37,7 @@ class Learn(object):
 
         for sFile in self.spamFiles:
             with open(sFile, "r", encoding="latin1") as f:
-                self.spamWordList.extend(list(f.read().split()))
+                self.spamWordList.extend(f.read().split())
 
         self.vocabList.extend(self.spamWordList)
 
@@ -49,7 +49,7 @@ class Learn(object):
 
         for hFile in self.hamFiles:
             with open (hFile, "r", encoding="latin1") as f:
-                self.hamWordList.extend(list(f.read().split()))
+                self.hamWordList.extend(f.read().split())
 
         self.vocabList.extend(self.hamWordList)
 
@@ -90,9 +90,10 @@ class Learn(object):
                         'ham': 0
                         }
 
+        distinctWordLen = len(self.vocabList)
         for word in self.vocabList:
-            self.proDict['word'][word] = ((self.spamWordCount[word] + 1 / self.spamTrainingCount) , \
-                                          (self.hamWordCount[word] + 1/ self.hamTrainingCount))
+            self.proDict['word'][word] = (((self.spamWordCount[word] + 1) / (len(self.spamWordList) + distinctWordLen))  , \
+                                          ((self.hamWordCount[word] + 1)/ (len(self.hamWordList) + distinctWordLen)))
 
         self.proDict['spam'] = self.spamTrainingCount / self.totalTrainingCount
         self.proDict['ham'] = self.hamTrainingCount / self.totalTrainingCount

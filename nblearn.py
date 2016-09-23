@@ -27,9 +27,6 @@ class Learn(object):
             This function is used to parse the vocab list and training data provided to us.
         """
 
-
-        print("inside getdaat")
-
         for root, dirnames, filenames in os.walk(self.fname):
             if "spam" in dirnames:
                 spamdir = os.path.join(root, "spam")
@@ -62,27 +59,12 @@ class Learn(object):
         
     def find_token_probability(self):
 
-        print("inside token probability")
-
-        print("vocab list")
-        print(len(self.vocabList))
-        # exit(1)
-
-
         self.spamWordCount = Counter(self.spamWordList)
-
-        # print("getting spam word count")
-
-
-
         self.hamWordCount = Counter(self.hamWordList)
-
 
         self.spamTrainingCount = len(self.spamFiles)
         self.hamTrainingCount = len(self.hamFiles)
-        
-        # print self.spamTrainingCount
-        # print self.hamTrainingCount
+
         self.totalTrainingCount = self.spamTrainingCount + self.hamTrainingCount
 
         self.proDict = {'word': {},
@@ -98,12 +80,9 @@ class Learn(object):
         self.proDict['spam'] = self.spamTrainingCount / self.totalTrainingCount
         self.proDict['ham'] = self.hamTrainingCount / self.totalTrainingCount
 
-        # print("******** reached this place")
-
 
         try:
             with open('nbmodel.txt', 'w') as f:
-                print("opened the file and writing to it")
                 f.write(str(self.proDict))
         except:
             print("something went wrong with FIL IO")
@@ -121,11 +100,9 @@ if __name__ == "__main__":
 
     dataPath = sys.argv[1]
 
-    print("The file name is: ", dataPath)
-
     learn_obj = Learn()
     learn_obj.fname = dataPath
     learn_obj.getData()
     learn_obj.find_token_probability()
-    print("Exiting model creation")
+
     exit(0)
